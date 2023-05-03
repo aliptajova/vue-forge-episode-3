@@ -50,16 +50,32 @@ const usersTyping = ref<User[]>([]);
 async function handleNewMessage(message: Message) {
   messages.value.push(message);
   usersTyping.value.push(bot.value);
+  const response = await fetchResponse(message);
+  
   setTimeout(() => {
     usersTyping.value = [];
     messages.value.push({
       id: nanoid(),
       createdAt: new Date(),
-      text: "Placeholder response until we implement the bot",
+      text: response,
       userId: "assistant",
     });
   }, 3000);
+
 }
+
+ async function fetchResponse(message:Message) {
+   
+    return await $fetch( '/api/ai', {
+          method: 'POST',
+          body: {
+            message: message.text
+          }
+          // message: message.text
+      } );
+ }
+
+
 </script>
 <template>
   <ChatBox
